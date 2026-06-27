@@ -30,7 +30,7 @@ int main() {
 	std::wcout << std::endl;
 
 	std::wcout << L"Для добавления задачи напишите '/task.add [текст]'." << std::endl;
-	std::wcout << L"Для изменения статуса задачи напишите '/task.status.set [номер] [статус](0-в процессе, 1-выполнена)'." << std::endl;
+	std::wcout << L"Для изменения статуса задачи напишите '/task.status.set [номер] [статус]('inProgress' - в процессе, 'completed' - выполнено, 'overdue' - просрочено'." << std::endl;
 	std::wcout << L"Для просмотра текущих задач напишите '/task.display'." << std::endl;
 	std::wcout << L"Для запуска помодоро таймера на 25 мин напишите '/pomodoro.start'." << std::endl;
 	std::wcout << L"Для приостановки помодоро таймера напишите '/pomodoro.pause'." << std::endl;
@@ -67,17 +67,22 @@ int main() {
 			std::wstring arguments = input.substr(17);
 			std::wstringstream stream(arguments);
 			int id = -1;
-			int status = -1;
-			stream >> id >> status;
+			std::wstring statusStr = L"";
+			stream >> id >> statusStr;
+			taskManager::TCStatus status = taskManag.WStringToTCS(statusStr);
 			if (stream.fail()) {
-				std::wcout << L"Ошибка! Номер задачи и статус должны быть числами." << std::endl;
+				std::wcout << L"Ошибка! Номер задачи должен быть числом, а статус текстом." << std::endl;
 			}
-			else if (id <= 0 || (status != 0 && status != 1)) {
+			else if (id <= 0 || (status == taskManager::TCStatus::UNKNOWN)) {
 				std::wcout << L"Ошибка! аргументы введены не верно." << std::endl;
 			}
 			else {
-				taskManag.changeStatus(id, status);
-				std::wcout << L"Статус успешно установлен на " << status << L" у задачи под номером " << id << std::endl;
+				if (taskManag.changeStatus(id, status)) {
+					std::wcout << L"Статус успешно установлен на " << statusStr << L" у задачи под номером " << id << std::endl;
+				}
+				else {
+					std::wcout << L"Ошибка! Не удалось изменить статус задачи. Проверьте номер задачи." << std::endl;
+				}
 			}
 		}
 	}

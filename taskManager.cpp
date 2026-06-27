@@ -1,7 +1,47 @@
 ﻿#include "taskManager.h"
 
+std::wstring taskManager::TCSToWString(taskManager::TCStatus status)
+{
+    static const std::unordered_map<taskManager::TCStatus, std::wstring> mapper = {
+        { taskManager::TCStatus::UNKNOWN, L"unknown" },
+        { taskManager::TCStatus::IN_PROGRESS, L"inProgress" },
+        { taskManager::TCStatus::COMPLETED, L"completed" },
+        { taskManager::TCStatus::OVERDUE, L"overdue" }
+    };
+
+    // Строка 2: Ищем переданный enum в нашей таблице
+    auto it = mapper.find(status);
+
+    // Строка 3: Если нашли — возвращаем строку, иначе кидаем исключение
+    if (it != mapper.end()) {
+        return it->second;
+    }
+
+    throw std::invalid_argument("Unknown TC state");
+}
+
+taskManager::TCStatus taskManager::WStringToTCS(std::wstring status)
+{
+    static const std::unordered_map<std::wstring, taskManager::TCStatus> mapper = {
+        { L"unknown", taskManager::TCStatus::UNKNOWN },
+        { L"inProgress", taskManager::TCStatus::IN_PROGRESS },
+        { L"completed", taskManager::TCStatus::COMPLETED },
+        { L"overdue", taskManager::TCStatus::OVERDUE }
+    };
+
+    // Строка 2: Ищем переданный enum в нашей таблице
+    auto it = mapper.find(status);
+
+    // Строка 3: Если нашли — возвращаем строку, иначе кидаем исключение
+    if (it != mapper.end()) {
+        return it->second;
+    }
+
+    return taskManager::TCStatus::UNKNOWN;
+}
+
 void taskManager::addTask(std::wstring task) {
-    json taskObj = { {"content", toUtf8(task)}, {"status", 0}};
+    json taskObj = { {"content", toUtf8(task)}, {"status", toUtf8(TCSToWString(taskManager::TCStatus::UNKNOWN))}};
     addToJson(taskPath, taskObj);
 }
 
@@ -26,13 +66,24 @@ void taskManager::showCurrentTasks() {
 	for (auto& item : tasks)
 	{
 		std::string contentStr = item.value("content", "неизвесная задача");
-        int status = item.value("status", 0);
+        taskManager::TCStatus status = WStringToTCS(toWstring(item.value("status", "unknown")));
 
 		std::wstring content = toWstring(contentStr);
 
-        std::wcout << count << L". " << content;
-        if (status == 1) {
-            std::wcout << L" ✅";
+        std::wcout << count << L". " << content << L" || Статус: ";
+        switch (status) {
+        case taskManager::TCStatus::COMPLETED:
+            std::wcout << L"Выполнено ✅";
+            break;
+        case taskManager::TCStatus::UNKNOWN:
+            std::wcout << L"Неизвестен";
+            break;
+        case taskManager::TCStatus::IN_PROGRESS:
+            std::wcout << L"В процессе...";
+            break;
+        case taskManager::TCStatus::OVERDUE:
+            std::wcout << L"Просрочено 🚳❌";
+            break;
         }
         std::wcout << std::endl;
 		count++;
@@ -40,7 +91,7 @@ void taskManager::showCurrentTasks() {
 	std::wcout << L"---------------------------------------------------" << std::endl;
 }
 
-bool taskManager::changeStatus(int id, int status /*0-не выполненено, 1-выполнено*/)
+bool taskManager::changeStatus(int id, taskManager::TCStatus status /*0-не выполненено, 1-выполнено*/)
 {
     json tasks = readJson(taskPath);
 
@@ -57,7 +108,8 @@ bool taskManager::changeStatus(int id, int status /*0-не выполненен�
     }
 
     if (id > 0 && id <= tasks.size()) {
-        tasks.at(id - 1)["status"] = status;
+        std::string statusStr = toUtf8(TCSToWString(status));
+        tasks.at(id - 1)["status"] = statusStr;
     }
     else {
 		std::wcout << L"Неверный идентификатор задачи." << std::endl;

@@ -10,11 +10,22 @@
 
 class taskManager {
 public:
+	enum class TCStatus /*task completion status*/ {
+		IN_PROGRESS, // в процессе
+		UNKNOWN,     // статус неизвестен
+		COMPLETED,   // выполнено
+		OVERDUE      // просроцено
+	};
+
 	fs::path taskPath = fs::current_path() / "tasks.json";
 
 	void addTask(std::wstring task);
 
 	void showCurrentTasks();
 
-	bool changeStatus(int id, int status /*0-не выполненено, 1-выполнено*/);
+	bool changeStatus(int id, taskManager::TCStatus status /*0-не выполненено, 1-выполнено*/);
+
+	TCStatus WStringToTCS(std::wstring status);
+private:
+	std::wstring TCSToWString(taskManager::TCStatus status);
 };
