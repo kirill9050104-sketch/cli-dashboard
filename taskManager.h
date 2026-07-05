@@ -7,14 +7,22 @@
 #include <nlohmann/json.hpp>
 #include "stringHelper.h"
 #include "jsonHelper.h"
+#include "startHelper.h"
 
 class taskManager {
 public:
 	enum class TCStatus /*task completion status*/ {
+		UNKNOWN,     // неизвестен
 		IN_PROGRESS, // в процессе
-		UNKNOWN,     // статус неизвестен
 		COMPLETED,   // выполнено
-		OVERDUE      // просроцено
+		OVERDUE      // просрочено
+	};
+
+	enum class TCPriority /*task completion priority*/ {
+		UNKNOWN, // неизвестен
+		LOW,	 // низкий
+		MEDIUM,  // средний
+		HIGH     // высокий
 	};
 
 	fs::path taskPath = fs::current_path() / "tasks.json";
@@ -23,9 +31,17 @@ public:
 
 	void showCurrentTasks();
 
-	bool changeStatus(int id, taskManager::TCStatus status /*0-не выполненено, 1-выполнено*/);
+	bool changeStatus(int id, taskManager::TCStatus status);
 
-	TCStatus WStringToTCS(std::wstring status);
+	bool changePriority(int id, taskManager::TCPriority priority);
+
+	bool changeDueDate(int id, datetime dueDate);
+
+	taskManager::TCPriority WStringToTCP(std::wstring status);
+
+	taskManager::TCStatus WStringToTCS(std::wstring status);
 private:
 	std::wstring TCSToWString(taskManager::TCStatus status);
+
+	std::wstring TCPToWString(taskManager::TCPriority priority);
 };

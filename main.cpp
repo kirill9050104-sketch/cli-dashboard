@@ -3,6 +3,7 @@
 #include <fcntl.h>    // Для _setmode
 #include <io.h>       // Для _setmode
 #include <Windows.h>
+#include <vector>
 
 #include "stringHelper.h"
 #include "taskManager.h"
@@ -30,12 +31,15 @@ int main() {
 	std::wcout << std::endl;
 
 	std::wcout << L"Для добавления задачи напишите '/task.add [текст]'." << std::endl;
-	std::wcout << L"Для изменения статуса задачи напишите '/task.status.set [номер] [статус]('inProgress' - в процессе, 'completed' - выполнено, 'overdue' - просрочено'." << std::endl;
+	std::wcout << L"Для изменения статуса задачи напишите '/task.status.set [номер] [статус]('inProgress' - в процессе, 'completed' - выполнено')." << std::endl;
+	std::wcout << L"Для изменения приоритета задачи напишите '/task.priority.set [номер] [приоритет]('low' - низкий, 'medium' - средний, 'high' - высокий')." << std::endl;
+	std::wcout << L"Для изменения срока выполнения задачи напишите '/task.due_date.set [номер] [дата](формат: ДД.ММ.ГГ) [время](формат: ЧЧ:ММ)." << std::endl;
 	std::wcout << L"Для просмотра текущих задач напишите '/task.display'." << std::endl;
 	std::wcout << L"Для запуска помодоро таймера на 25 мин напишите '/pomodoro.start'." << std::endl;
 	std::wcout << L"Для приостановки помодоро таймера напишите '/pomodoro.pause'." << std::endl;
 	std::wcout << L"Для полной остановки помодоро таймера напишите '/pomodoro.stop'." << std::endl;
-	std::wcout << L"Для продолжения помодоро таймера напишите '/pomodoro.resume'.\n" << std::endl;
+	std::wcout << L"Для продолжения помодоро таймера напишите '/pomodoro.resume'." << std::endl;
+	std::wcout << std::endl;
 
 	while (true) {
 		std::wstring input;
@@ -64,6 +68,74 @@ int main() {
 			pomodoro.pauseTimer();
 		}
 		if (input.find(L"/task.status.set ") != std::wstring::npos) {
+			std::wstring arguments = input.substr(17);
+			std::wstringstream stream(arguments);
+			int id = -1;
+			std::wstring statusStr = L"";
+			stream >> id >> statusStr;
+			taskManager::TCStatus status = taskManag.WStringToTCS(statusStr);
+			if (stream.fail()) {
+				std::wcout << L"Ошибка! Номер задачи должен быть числом, а статус текстом." << std::endl;
+			}
+			else if (id <= 0 || (status == taskManager::TCStatus::UNKNOWN)) {
+				std::wcout << L"Ошибка! аргументы введены не верно." << std::endl;
+			}
+			else {
+				if (taskManag.changeStatus(id, status)) {
+					std::wcout << L"Статус успешно установлен на " << statusStr << L" у задачи под номером " << id << std::endl;
+				}
+				else {
+					std::wcout << L"Ошибка! Не удалось изменить статус задачи. Проверьте номер задачи." << std::endl;
+				}
+			}
+		}
+		if (input.find(L"/task.priority.set ") != std::wstring::npos) {
+			std::wstring arguments = input.substr(17);
+			std::wstringstream stream(arguments);
+			int id = -1;
+			std::wstring priorityStr = L"";
+			stream >> id >> priorityStr;
+			taskManager::TCPriority priority = taskManag.WStringToTCP(priorityStr);
+			if (stream.fail()) {
+				std::wcout << L"Ошибка! Номер задачи должен быть числом, а приоритет текстом." << std::endl;
+			}
+			else if (id <= 0 || (priority == taskManager::TCPriority::UNKNOWN)) {
+				std::wcout << L"Ошибка! аргументы введены не верно." << std::endl;
+			}
+			else {
+				if (taskManag.changePriority(id, priority)) {
+					std::wcout << L"Приоритет успешно установлен на " << priorityStr << L" у задачи под номером " << id << std::endl;
+				}
+				else {
+					std::wcout << L"Ошибка! Не удалось изменить приоритет задачи. Проверьте номер задачи." << std::endl;
+				}
+			}
+		}
+		if (input.find(L"/task.due_date.set ") != std::wstring::npos) {
+			std::wstring arguments = input.substr(17);
+			std::wstringstream stream(arguments);
+			int id = -1;
+			std::wstring dateStr = L"";
+			std::wstring timeStr = L"";
+			stream >> id >> dateStr >> timeStr;
+			datetime dueDate = datetime::from_string(toUtf8(dateStr), toUtf8(timeStr));
+
+			if (stream.fail()) {
+				std::wcout << L"Ошибка! Номер задачи должен быть числом, а дата и время должны быть через пробел." << std::endl;
+			}
+			else if (id <= 0 || (dueDate.date == "00.00.00" || dueDate < getCurrentTime())) {
+				std::wcout << L"Ошибка! аргументы введены не верно." << std::endl;
+			}
+			else {
+				if (taskManag.changeDueDate(id, dueDate)) {
+					std::wcout << L"Срок выполнения успешно установлен на " << dateStr << L" | " << timeStr << L" у задачи под номером " << id << std::endl;
+				}
+				else {
+					std::wcout << L"Ошибка! Не удалось изменить срок выполнения задачи. Проверьте номер задачи." << std::endl;
+				}
+			}
+		}
+		if (input.find(L"/task.priority.set ") != std::wstring::npos) {
 			std::wstring arguments = input.substr(17);
 			std::wstringstream stream(arguments);
 			int id = -1;

@@ -139,17 +139,21 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="commandParser.cpp" />
     <ClCompile Include="jsonHelper.cpp" />
     <ClCompile Include="pomodoroTimer.cpp" />
     <ClCompile Include="startHelper.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="statusManager.cpp" />
     <ClCompile Include="stringHelper.cpp" />
     <ClCompile Include="taskManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="commandParser.h" />
     <ClInclude Include="jsonHelper.h" />
     <ClInclude Include="pomodoroTimer.h" />
     <ClInclude Include="startHelper.h" />
+    <ClInclude Include="statusManager.h" />
     <ClInclude Include="stringHelper.h" />
     <ClInclude Include="taskManager.h" />
   </ItemGroup>
