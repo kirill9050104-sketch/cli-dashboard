@@ -24,9 +24,9 @@ taskManager::TCPriority taskManager::WStringToTCP(std::wstring status)
 {
     static const std::unordered_map<std::wstring, taskManager::TCPriority> mapper = {
         { L"unknown", taskManager::TCPriority::UNKNOWN },
-        { L"inProgress", taskManager::TCPriority::HIGH },
-        { L"completed", taskManager::TCPriority::MEDIUM },
-        { L"overdue", taskManager::TCPriority::LOW }
+        { L"high", taskManager::TCPriority::HIGH },
+        { L"medium", taskManager::TCPriority::MEDIUM },
+        { L"low", taskManager::TCPriority::LOW }
     };
 
     // Строка 2: Ищем переданный enum в нашей таблице

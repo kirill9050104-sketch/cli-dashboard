@@ -90,7 +90,7 @@ int main() {
 			}
 		}
 		if (input.find(L"/task.priority.set ") != std::wstring::npos) {
-			std::wstring arguments = input.substr(17);
+			std::wstring arguments = input.substr(19);
 			std::wstringstream stream(arguments);
 			int id = -1;
 			std::wstring priorityStr = L"";
@@ -112,7 +112,7 @@ int main() {
 			}
 		}
 		if (input.find(L"/task.due_date.set ") != std::wstring::npos) {
-			std::wstring arguments = input.substr(17);
+			std::wstring arguments = input.substr(19);
 			std::wstringstream stream(arguments);
 			int id = -1;
 			std::wstring dateStr = L"";
