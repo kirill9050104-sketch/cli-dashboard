@@ -36,9 +36,9 @@ private:
 
     void TimerWorkerFunc(int minutes);
 
-	bool saveTimer(int minutes, int realseconds, datetime start, State state);
+	bool saveTimer(int minutes, int realseconds, const datetime& start, State state);
 
-    bool saveTimer(int minutes, datetime start) {
+    bool saveTimer(int minutes, const datetime& start) {
         return saveTimer(minutes, minutes * 60, start, State::STOPPED);
     }
 

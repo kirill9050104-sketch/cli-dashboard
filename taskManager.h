@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <nlohmann/json.hpp>
 #include "stringHelper.h"
 #include "jsonHelper.h"
@@ -18,16 +19,16 @@ public:
 		OVERDUE      // просрочено
 	};
 
-	enum class TCPriority /*task completion priority*/ {
-		UNKNOWN, // неизвестен
-		LOW,	 // низкий
-		MEDIUM,  // средний
-		HIGH     // высокий
+	enum class TCPriority : int/*task completion priority*/ {
+		UNKNOWN = 0, // неизвестен
+		LOW = 1,	 // низкий
+		MEDIUM = 2,  // средний
+		HIGH = 3     // высокий
 	};
 
 	fs::path taskPath = fs::current_path() / "tasks.json";
 
-	void addTask(std::wstring task);
+	void addTask(const std::wstring& task);
 
 	void showCurrentTasks();
 
@@ -35,11 +36,11 @@ public:
 
 	bool changePriority(int id, taskManager::TCPriority priority);
 
-	bool changeDueDate(int id, datetime dueDate);
+	bool changeDueDate(int id, const datetime& dueDate);
 
-	taskManager::TCPriority WStringToTCP(std::wstring status);
+	taskManager::TCPriority WStringToTCP(const std::wstring& status);
 
-	taskManager::TCStatus WStringToTCS(std::wstring status);
+	taskManager::TCStatus WStringToTCS(const std::wstring& status);
 private:
 	std::wstring TCSToWString(taskManager::TCStatus status);
 

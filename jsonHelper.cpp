@@ -1,6 +1,6 @@
 ﻿#include "jsonHelper.h"
 
-bool saveToJson(fs::path pathToJson, json jsonToSave) {
+bool saveToJson(const fs::path& pathToJson, const json& jsonToSave) {
     std::ofstream wf(pathToJson);
 
     if (wf.is_open())
@@ -14,7 +14,7 @@ bool saveToJson(fs::path pathToJson, json jsonToSave) {
     return true;
 }
 
-bool addToJson(fs::path pathToJson, json jsonToAdd)
+bool addToJson(const fs::path& pathToJson, const json& jsonToAdd)
 {
     json newJson = readJson(pathToJson);
 
@@ -37,7 +37,7 @@ bool addToJson(fs::path pathToJson, json jsonToAdd)
     return true;
 }
 
-json readJson(fs::path pathToJson) {
+json readJson(const fs::path& pathToJson) {
     lastErr = -1;
     json tasks = json::array();
 

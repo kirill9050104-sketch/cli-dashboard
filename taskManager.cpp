@@ -20,7 +20,7 @@ std::wstring taskManager::TCSToWString(taskManager::TCStatus status)
     return L"unknown";
 }
 
-taskManager::TCPriority taskManager::WStringToTCP(std::wstring status)
+taskManager::TCPriority taskManager::WStringToTCP(const std::wstring& status)
 {
     static const std::unordered_map<std::wstring, taskManager::TCPriority> mapper = {
         { L"unknown", taskManager::TCPriority::UNKNOWN },
@@ -60,7 +60,7 @@ std::wstring taskManager::TCPToWString(taskManager::TCPriority priority)
     return L"unknown";
 }
 
-taskManager::TCStatus taskManager::WStringToTCS(std::wstring priority)
+taskManager::TCStatus taskManager::WStringToTCS(const std::wstring& priority)
 {
     static const std::unordered_map<std::wstring, taskManager::TCStatus> mapper = {
         { L"unknown", taskManager::TCStatus::UNKNOWN },
@@ -80,7 +80,7 @@ taskManager::TCStatus taskManager::WStringToTCS(std::wstring priority)
     return taskManager::TCStatus::UNKNOWN;
 }
 
-void taskManager::addTask(std::wstring task) {
+void taskManager::addTask(const std::wstring& task) {
 	std::string taskStr = toUtf8(task);
     std::string statusStr = toUtf8(TCSToWString(taskManager::TCStatus::IN_PROGRESS));
     std::string priorityStr = toUtf8(TCPToWString(taskManager::TCPriority::LOW));
@@ -229,7 +229,7 @@ bool taskManager::changePriority(int id, taskManager::TCPriority priority)
     return true;
 }
 
-bool taskManager::changeDueDate(int id, datetime dueDate)
+bool taskManager::changeDueDate(int id, const datetime& dueDate)
 {
     json tasks = readJson(taskPath);
 

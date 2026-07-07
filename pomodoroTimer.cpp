@@ -84,7 +84,7 @@ void pomodoroTimer::resumeTimer()
 	pomodoroTimer::currentState = pomodoroTimer::State::RUNNING;
 }
 
-bool pomodoroTimer::saveTimer(int minutes, int realseconds, datetime start, pomodoroTimer::State state) {
+bool pomodoroTimer::saveTimer(int minutes, int realseconds, const datetime& start, pomodoroTimer::State state) {
 	realseconds = minutes * 60 - realseconds;
 	int realminutes = realseconds / 60;
 	realseconds = realseconds % 60;
