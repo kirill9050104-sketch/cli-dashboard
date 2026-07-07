@@ -117,43 +117,33 @@ int main() {
 			int id = -1;
 			std::wstring dateStr = L"";
 			std::wstring timeStr = L"";
-			stream >> id >> dateStr >> timeStr;
-			datetime dueDate = datetime::from_string(toUtf8(dateStr), toUtf8(timeStr));
+			// 1. Попытка считать ровно 3 аргумента
+			std::wstring garbage;
+			if (!(stream >> id >> dateStr >> timeStr)) {
+				std::wcout << L"Ошибка! Номер задачи должен быть числом, а дата и время указаны через пробел." << std::endl;
+			}
+			// 2. Проверка на "хвосты" в потоке
+			else if (stream >> garbage) {
+				std::wcout << L"Ошибка! Обнаружены лишние аргументы в конце команды." << std::endl;
+			}
+			else {
+				// Парсим только после того, как убедились, что строки извлечены корректно
+				datetime dueDate = datetime::from_string(toUtf8(dateStr), toUtf8(timeStr));
 
-			if (stream.fail()) {
-				std::wcout << L"Ошибка! Номер задачи должен быть числом, а дата и время должны быть через пробел." << std::endl;
-			}
-			else if (id <= 0 || (dueDate.date == "00.00.00" || dueDate < getCurrentTime())) {
-				std::wcout << L"Ошибка! аргументы введены не верно." << std::endl;
-			}
-			else {
-				if (taskManag.changeDueDate(id, dueDate)) {
-					std::wcout << L"Срок выполнения успешно установлен на " << dateStr << L" | " << timeStr << L" у задачи под номером " << id << std::endl;
+				// 3. Бизнес-валидация данных (с учетом "" из твоего from_string)
+				if (id <= 0 || dueDate.date == "") {
+					std::wcout << L"Ошибка! Аргументы введены неверно или формат даты нарушен." << std::endl;
+				}
+				else if (dueDate < getCurrentTime()) {
+					std::wcout << L"Ошибка! Дата не может быть раньше сегодняшнего дня." << std::endl;
 				}
 				else {
-					std::wcout << L"Ошибка! Не удалось изменить срок выполнения задачи. Проверьте номер задачи." << std::endl;
-				}
-			}
-		}
-		if (input.find(L"/task.priority.set ") != std::wstring::npos) {
-			std::wstring arguments = input.substr(17);
-			std::wstringstream stream(arguments);
-			int id = -1;
-			std::wstring statusStr = L"";
-			stream >> id >> statusStr;
-			taskManager::TCStatus status = taskManag.WStringToTCS(statusStr);
-			if (stream.fail()) {
-				std::wcout << L"Ошибка! Номер задачи должен быть числом, а статус текстом." << std::endl;
-			}
-			else if (id <= 0 || (status == taskManager::TCStatus::UNKNOWN)) {
-				std::wcout << L"Ошибка! аргументы введены не верно." << std::endl;
-			}
-			else {
-				if (taskManag.changeStatus(id, status)) {
-					std::wcout << L"Статус успешно установлен на " << statusStr << L" у задачи под номером " << id << std::endl;
-				}
-				else {
-					std::wcout << L"Ошибка! Не удалось изменить статус задачи. Проверьте номер задачи." << std::endl;
+					if (taskManag.changeDueDate(id, dueDate)) {
+						std::wcout << L"Срок выполнения успешно установлен на " << dateStr << L" | " << timeStr << L" у задачи под номером " << id << std::endl;
+					}
+					else {
+						std::wcout << L"Ошибка! Не удалось изменить срок выполнения задачи. Проверьте номер задачи." << std::endl;
+					}
 				}
 			}
 		}

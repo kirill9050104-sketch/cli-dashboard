@@ -113,8 +113,8 @@ void taskManager::showCurrentTasks() {
 		std::string contentStr = item.value("content", "неизвесная задача");
         taskManager::TCStatus status = WStringToTCS(toWstring(item.value("status", "unknown")));
         taskManager::TCPriority priority = WStringToTCP(toWstring(item.value("priority", "unknown")));
-        std::string dueDateStr = item.value("dueDate", "00.00.00");
-        std::string dueTimeStr = item.value("dueTime", "00:00");
+        std::string dueDateStr = item.value("dueDate", "");
+        std::string dueTimeStr = item.value("dueTime", "");
         datetime dueDate = datetime::from_string(dueDateStr, dueTimeStr);
 
 		std::wstring content = toWstring(contentStr);
@@ -157,7 +157,7 @@ void taskManager::showCurrentTasks() {
             break;
         }
 
-        if (dueDateStr != "00.00.00") {
+        if (dueDateStr != "") {
             std::wcout << L" || Срок выполнения: " << toWstring(dueDateStr) << L" | " << toWstring(dueTimeStr);
         } else {
             std::wcout << L" || Срок выполнения: Не задан [-]";
