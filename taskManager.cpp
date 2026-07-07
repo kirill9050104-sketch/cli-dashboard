@@ -88,10 +88,39 @@ void taskManager::addTask(const std::wstring& task) {
     addToJson(taskPath, taskObj);
 }
 
+json taskManager::sortByPriority(json& tasks)
+{
+    if (!tasks.is_array() || tasks.empty()) return json::array();
 
+    size_t arrSize = tasks.size();
+
+    std::vector<std::pair<TCPriority, size_t>> WeghtI;
+    WeghtI.reserve(arrSize);
+
+    for (size_t i = 0; i < arrSize; i++) {
+        std::wstring priority = toWstring(tasks[i].value("priority", "unknown"));
+        WeghtI.push_back({ WStringToTCP(priority), i });
+    }
+
+    std::sort(WeghtI.begin(), WeghtI.end(),
+        [](const auto& left, const auto& right) {
+            return static_cast<int>(left.first) > static_cast<int>(right.first); // По убыванию
+        });
+
+    json sortArr = json::array();
+    for (const auto& pair : WeghtI) {
+        sortArr.push_back(std::move(tasks[pair.second]));
+    }
+
+    return std::move(sortArr);
+}
 
 void taskManager::showCurrentTasks() {
-	json tasks = readJson(taskPath);
+    // 1. Создаем полноценную переменную (lvalue)
+    json rawTasks = readJson(taskPath);
+
+    // 2. Теперь её можно спокойно передавать в неконстантную ссылку json&
+    json tasks = sortByPriority(rawTasks);
 
 	// ИСПРАВЛЕНО: Если код ошибки критический — выходим
     if (lastErr > 0 && lastErr != 3) { 
@@ -121,7 +150,6 @@ void taskManager::showCurrentTasks() {
 
         datetime currentTime = getCurrentTime();
         if (currentTime > dueDate) {
-            changeStatus(count, TCStatus::OVERDUE);
             status = TCStatus::OVERDUE;
         }
 
@@ -167,6 +195,8 @@ void taskManager::showCurrentTasks() {
 		count++;
 	}
 	std::wcout << L"----------------------------------------------------" << std::endl;
+
+    saveToJson(taskPath, tasks);
 }
 
 bool taskManager::changeStatus(int id, taskManager::TCStatus status)

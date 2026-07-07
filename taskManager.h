@@ -45,4 +45,6 @@ private:
 	std::wstring TCSToWString(taskManager::TCStatus status);
 
 	std::wstring TCPToWString(taskManager::TCPriority priority);
+
+	json sortByPriority(json& tasks);
 };
