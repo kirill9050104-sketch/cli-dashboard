@@ -14,27 +14,28 @@ bool saveToJson(const fs::path& pathToJson, const json& jsonToSave) {
     return true;
 }
 
-bool addToJson(const fs::path& pathToJson, const json& jsonToAdd)
+bool addToJson(const fs::path& pathToJson, const std::string& key, const json& jsonToAdd)
 {
     json newJson = readJson(pathToJson);
 
-    if (lastErr > 0) {
+    if (lastErr == 1) {
         std::wcout << L"Ошибка синхронизации json, проверьте файл по пути " << pathToJson << std::endl;
         return false;
     }
 
-    //if (newJson.empty()) {
-    //    std::wcout << L"Файл по пути " << pathToJson << L" пуст." << std::endl;
-    //    return false;
-    //}
-
-    newJson.push_back(jsonToAdd);
-
-    if (!saveToJson(pathToJson, newJson)) {
-        return false;
+    if (key.empty()) {
+        if (!newJson.is_array()) newJson = json::array();
+        newJson.push_back(jsonToAdd);
+    }
+    else {
+        if (!newJson.is_object()) newJson = json::object();
+        if (!newJson.contains(key) || !newJson[key].is_array()) {
+            newJson[key] = json::array();
+        }
+        newJson[key].push_back(jsonToAdd);
     }
 
-    return true;
+    return saveToJson(pathToJson, newJson);
 }
 
 json readJson(const fs::path& pathToJson) {
@@ -66,8 +67,8 @@ json readJson(const fs::path& pathToJson) {
         if (!data.is_array())
         {
             lastErr = 2; // Структура нарушена (в файле объект {}, а не массив [])
-            std::wcout << L"Структура нарушена (в файле объект {}, а не массив [])" << std::endl;
-            return tasks;
+            //std::wcout << L"Структура нарушена (в файле объект {}, а не массив [])" << std::endl;
+            return data;
         }
 
         if (data.empty())

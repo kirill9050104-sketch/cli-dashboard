@@ -22,15 +22,17 @@ std::string toUtf8(const std::wstring& wstr)
 }
 
 std::wstring convNumToTwo_digitW(const std::wstring& number) {
+    std::wstring result = number;
     if (number.size() == 1) {
-        number = L'0' + number;
+        result = L'0' + number;
     }
-    return number;
+    return result;
 }
 
 std::string convNumToTwo_digitA(const std::string& number) {
+    std::string result = number;
     if (number.size() == 1) {
-        number = '0' + number;
+        result = '0' + number;
     }
-    return number;
+    return result;
 }

@@ -14,4 +14,8 @@ json readJson(const fs::path& pathToJson);
 
 bool saveToJson(const fs::path& pathToJson, const json& jsonToSave);
 
-bool addToJson(const fs::path& pathToJson, const json& jsonToAdd);
+bool addToJson(const fs::path& pathToJson, const std::string& key, const json& jsonToAdd);
+
+inline bool addToJson(const fs::path& pathToJson, const json& jsonToAdd) {
+	return addToJson(pathToJson, "", jsonToAdd);
+}

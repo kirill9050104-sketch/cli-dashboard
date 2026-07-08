@@ -91,10 +91,12 @@ bool pomodoroTimer::saveTimer(int minutes, int realseconds, const datetime& star
 	std::string minutesStr = convNumToTwo_digitA(std::to_string(minutes)) + ":00";
 	std::string realminutesStr = convNumToTwo_digitA(std::to_string(realminutes));
 	std::string realsecondsStr = convNumToTwo_digitA(std::to_string(realseconds));
+	
 	json timerObj = {
-		{"start", start.date + " || " + start.time},
+		{"start", start.time},
 		{"time", realminutesStr + ":" + realsecondsStr + " / " + minutesStr},
 		{"state", toUtf8(stateToWString(state))}
 	};
-	return addToJson(timerPath, timerObj);
+	
+	return addToJson(timerPath, start.date, timerObj);
 }
