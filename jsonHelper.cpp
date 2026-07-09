@@ -82,6 +82,7 @@ json readJson(const fs::path& pathToJson) {
     }
     catch (const json::parse_error& e) // Ловим специфичную ошибку JSON
     {
+        
         lastErr = 4; // Ошибка синтаксиса JSON (битый файл)
         std::wcout << L"Ошибка синтаксиса JSON (битый файл)" << std::endl;
         if (file.is_open()) file.close();

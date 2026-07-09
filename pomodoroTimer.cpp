@@ -84,6 +84,47 @@ void pomodoroTimer::resumeTimer()
 	pomodoroTimer::currentState = pomodoroTimer::State::RUNNING;
 }
 
+bool pomodoroTimer::updateTimerSum(int realTimerMin, int realTimerSec)
+{
+	json timers = readJson(timerPath);
+	datetime currentDate = getCurrentTime();
+
+	if (!timers.is_object()) {
+		timers = json::object();
+	}
+
+	if (!timers.contains(currentDate.date) || !timers[currentDate.date].is_array()) {
+		timers[currentDate.date] = json::array();
+	}
+
+	bool sumFound = false;
+	for (auto& timer : timers[currentDate.date]) {
+		if (timer.contains("type") && timer["type"] == "Timer sum") {
+			int tSumMin = timer.value("sumMin", 0) + realTimerMin;
+			int tSumSec = timer.value("sumSec", 0) + realTimerSec;
+			tSumSec += tSumMin;
+			tSumMin = tSumSec / 60;
+			tSumSec = tSumSec % 60;
+			timer["sumMin"] = tSumMin;
+			timer["sumSec"] = tSumSec;
+			sumFound = true;
+			break;
+		}
+	}
+
+	if (!sumFound) {
+		json sumObj = {
+			{ "type", "Timer sum" },
+			{ "sumMin", realTimerMin },
+			{ "sumSec", realTimerSec }
+		};
+
+		timers[currentDate.date].push_back(sumObj);
+	}
+
+	return saveToJson(timerPath, timers);
+}
+
 bool pomodoroTimer::saveTimer(int minutes, int realseconds, const datetime& start, pomodoroTimer::State state) {
 	realseconds = minutes * 60 - realseconds;
 	int realminutes = realseconds / 60;
@@ -93,10 +134,15 @@ bool pomodoroTimer::saveTimer(int minutes, int realseconds, const datetime& star
 	std::string realsecondsStr = convNumToTwo_digitA(std::to_string(realseconds));
 	
 	json timerObj = {
+		{"type", "Timer log"},
 		{"start", start.time},
 		{"time", realminutesStr + ":" + realsecondsStr + " / " + minutesStr},
 		{"state", toUtf8(stateToWString(state))}
 	};
+
+	if (!updateTimerSum(realminutes, realseconds)) {
+		return false;
+	}
 	
 	return addToJson(timerPath, start.date, timerObj);
 }

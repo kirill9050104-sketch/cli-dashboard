@@ -36,6 +36,8 @@ private:
 
     void TimerWorkerFunc(int minutes);
 
+    bool updateTimerSum(int realTimerMin, int realTimerSec);
+
 	bool saveTimer(int minutes, int realseconds, const datetime& start, State state);
 
     bool saveTimer(int minutes, const datetime& start) {
