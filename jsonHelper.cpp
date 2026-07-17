@@ -67,7 +67,6 @@ json readJson(const fs::path& pathToJson) {
         if (!data.is_array())
         {
             lastErr = 2; // Структура нарушена (в файле объект {}, а не массив [])
-            //std::wcout << L"Структура нарушена (в файле объект {}, а не массив [])" << std::endl;
             return data;
         }
 

@@ -85,7 +85,10 @@ void taskManager::addTask(const std::wstring& task) {
     std::string statusStr = toUtf8(TCSToWString(taskManager::TCStatus::IN_PROGRESS));
     std::string priorityStr = toUtf8(TCPToWString(taskManager::TCPriority::LOW));
     json taskObj = { {"content", taskStr}, {"status", statusStr}, {"priority", priorityStr}};
-    addToJson(taskPath, taskObj);
+    if (!addToJson(taskPath, taskObj)) {
+        std::wcout << L"Задача '" << task << L"' не добавлена в список дел ( ошибка сохранения )." << std::endl;
+    }
+    std::wcout << L"Задача '" << task << L"' добавлена в список дел." << std::endl;
 }
 
 json taskManager::sortByPriority(json& tasks)
@@ -149,7 +152,7 @@ void taskManager::showCurrentTasks() {
 		std::wstring content = toWstring(contentStr);
 
         datetime currentTime = getCurrentTime();
-        if (currentTime > dueDate) {
+        if (currentTime > dueDate && dueDateStr != "") {
             status = TCStatus::OVERDUE;
         }
 
@@ -215,14 +218,13 @@ bool taskManager::changeStatus(int id, taskManager::TCStatus status)
         return false;
     }
 
-    if (id > 0 && id <= tasks.size()) {
-        std::string statusStr = toUtf8(TCSToWString(status));
-        tasks.at(id - 1)["status"] = statusStr;
+    if (!(id > 0 && id <= tasks.size())) {
+        std::wcout << L"Неверный идентификатор задачи." << std::endl;
+        return false;
     }
-    else {
-		std::wcout << L"Неверный идентификатор задачи." << std::endl;
-		return false;
-    }
+
+    std::string statusStr = toUtf8(TCSToWString(status));
+    tasks.at(id - 1)["status"] = statusStr;
 
     saveToJson(taskPath, tasks);
 
@@ -245,14 +247,13 @@ bool taskManager::changePriority(int id, taskManager::TCPriority priority)
         return false;
     }
 
-    if (id > 0 && id <= tasks.size()) {
-        std::string priorityStr = toUtf8(TCPToWString(priority));
-        tasks.at(id - 1)["priority"] = priorityStr;
-    }
-    else {
+    if (!(id > 0 && id <= tasks.size())) {
         std::wcout << L"Неверный идентификатор задачи." << std::endl;
         return false;
     }
+
+    std::string priorityStr = toUtf8(TCPToWString(priority));
+    tasks.at(id - 1)["priority"] = priorityStr;
 
     saveToJson(taskPath, tasks);
 
@@ -275,16 +276,16 @@ bool taskManager::changeDueDate(int id, const datetime& dueDate)
         return false;
     }
 
-    if (id > 0 && id <= tasks.size()) {
-        std::string dueDateStr = dueDate.date;
-        tasks.at(id - 1)["dueDate"] = dueDateStr;
-        std::string dueTimeStr = dueDate.time;
-        tasks.at(id - 1)["dueTime"] = dueTimeStr;
-    }
-    else {
+    if (!(id > 0 && id <= tasks.size())) {
         std::wcout << L"Неверный идентификатор задачи." << std::endl;
         return false;
     }
+    
+
+    std::string dueDateStr = dueDate.date;
+    tasks.at(id - 1)["dueDate"] = dueDateStr;
+    std::string dueTimeStr = dueDate.time;
+    tasks.at(id - 1)["dueTime"] = dueTimeStr;
 
     saveToJson(taskPath, tasks);
 

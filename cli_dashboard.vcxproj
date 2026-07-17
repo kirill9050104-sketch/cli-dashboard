@@ -147,6 +147,7 @@
     <ClCompile Include="statusManager.cpp" />
     <ClCompile Include="stringHelper.cpp" />
     <ClCompile Include="taskManager.cpp" />
+    <ClCompile Include="userCommands.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="commandParser.h" />
@@ -156,8 +157,10 @@
     <ClInclude Include="statusManager.h" />
     <ClInclude Include="stringHelper.h" />
     <ClInclude Include="taskManager.h" />
+    <ClInclude Include="userCommands.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="commands.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

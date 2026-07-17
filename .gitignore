@@ -97,7 +97,11 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
-*.json
+
+# Файлы пользователя
+userSettings.json
+timers.json
+tasks.json
 
 # Chutzpah Test files
 _Chutzpah*
