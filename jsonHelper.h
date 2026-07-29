@@ -10,8 +10,12 @@ using json = nlohmann::json;
 
 static int lastErr;
 
-json readJson(fs::path pathToJson);
+json readJson(const fs::path& pathToJson);
 
-bool saveToJson(fs::path pathToJson, json jsonToSave);
+bool saveToJson(const fs::path& pathToJson, const json& jsonToSave);
 
-bool addToJson(fs::path pathToJson, json jsonToAdd);
+bool addToJson(const fs::path& pathToJson, const std::string& key, const json& jsonToAdd);
+
+inline bool addToJson(const fs::path& pathToJson, const json& jsonToAdd) {
+	return addToJson(pathToJson, "", jsonToAdd);
+}

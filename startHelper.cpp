@@ -23,10 +23,12 @@ datetime getCurrentTime() {
 	datetime result;
 
 	strftime(bufferDate, sizeof(bufferDate), "%d.%m.%Y", &ltm);
-	result.date = std::string(bufferDate);
+	std::string date = std::string(bufferDate);
 
 	strftime(bufferTime, sizeof(bufferTime), "%H:%M", &ltm);
-	result.time = std::string(bufferTime);
+	std::string time = std::string(bufferTime);
+
+    result = datetime::from_string(date, time);
 
 	return result;
 }

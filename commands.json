@@ -1,0 +1,56 @@
+﻿[
+  {
+    "name": "task.add",
+    "description": "Добавляет новую задачу.",
+    "typeUse": "/task.add [текст]",
+    "usageExample": "/task.add заварить чай"
+  },
+  {
+    "name": "task.status.set",
+    "description": "Измененяет статус задачи",
+    "typeUse": "/task.status.set [номер] [статус]('inProgress' - в процессе, 'completed' - выполнено).",
+    "usageExample": "/task.status.set 1 inProgress"
+  },
+  {
+    "name": "task.priority.set",
+    "description": "Измененяет приоритет задачи.",
+    "typeUse": "/task.priority.set [номер] [приоритет]('low' - низкий, 'medium' - средний, 'high' - высокий).",
+    "usageExample": "/task.priority.set 1 low"
+  },
+  {
+    "name": "task.due_date.set",
+    "description": "Измененяет срок выполнения задачи.",
+    "typeUse": "/task.due_date.set[номер][дата](формат: ДД.ММ.ГГ)[время](формат: ЧЧ:ММ).",
+    "usageExample": "/task.due_date.set 1 25.05.28 11:30"
+  },
+  {
+    "name": "task.display",
+    "description": "Показывает весь список текущих задач.",
+    "typeUse": "/task.display",
+    "usageExample": "/task.display"
+  },
+  {
+    "name": "pomodoro.start",
+    "description": "Запускает помодоро таймер на 25 мин.",
+    "typeUse": "/pomodoro.start",
+    "usageExample": "/pomodoro.start"
+  },
+  {
+    "name": "pomodoro.pause",
+    "description": "Приостанавливает помодоро таймер.",
+    "typeUse": "/pomodoro.pause",
+    "usageExample": "/pomodoro.pause"
+  },
+  {
+    "name": "pomodoro.stop",
+    "description": "Полностью остановливает помодоро таймер.",
+    "typeUse": "/pomodoro.stop",
+    "usageExample": "/pomodoro.stop"
+  },
+  {
+    "name": "pomodoro.resume",
+    "description": "Продолжает помодоро таймер.",
+    "typeUse": "/pomodoro.resume",
+    "usageExample": "/pomodoro.resume"
+  }
+]
